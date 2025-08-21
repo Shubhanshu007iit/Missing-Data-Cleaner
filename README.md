@@ -17,8 +17,7 @@ NumPy
 
 📂 Installation
 # Clone the repository
-git clone https://github.com/your-username/missing-data-cleaner.git
-
+https://github.com/Shubhanshu007iit/Missing-Data-Cleaner/edit/main/README.md
 # Go to the folder
 cd missing-data-cleaner
 
