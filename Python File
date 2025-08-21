@@ -1,0 +1,97 @@
+Missing Data Cleaner
+--------------------
+A Python tool to detect and fill missing values in datasets using statistical methods:
+- Mean
+- Median
+- Mode
+
+How it works:
+1. Loads a CSV file.
+2. Displays missing values before and after cleaning.
+3. Lets you choose a method (mean/median/mode).
+4. Saves the cleaned dataset as 'cleaned_data.csv'.
+"""
+
+import pandas as pd
+pd.read_csv("/content/Clean Dataset.csv")
+import pandas as pd
+import numpy as np
+
+def clean_missing_data(input_csv_path, output_csv_path):
+    """
+    Cleans a dataset by filling missing numerical values
+    and saves the cleaned data to a new CSV file.
+
+    Args:
+        input_csv_path (str): The path to the input CSV file.
+        output_csv_path (str): The path to save the cleaned output CSV file.
+    """
+    try:
+        df = pd.read_csv(input_csv_path)
+    except FileNotFoundError:
+        print(f"Error: The file '{input_csv_path}' was not found.")
+        return
+
+    # --- Step 1: Display Original Data and Missing Values ---
+    print("Original DataFrame:")
+    print(df)
+    print("\n" + "="*50 + "\n")
+
+    print("Missing Values Before Cleaning:")
+    missing_count = df.isnull().sum()
+    print(missing_count[missing_count > 0])
+    print("\n" + "="*50 + "\n")
+
+    # --- Step 2: User Chooses a Filling Method ---
+    print("Choose a method to fill missing numerical values:")
+    print("1. Mean")
+    print("2. Median")
+    print("3. Mode")
+
+    while True:
+        choice = input("Enter your choice (1, 2, or 3): ").strip()
+        if choice == '1':
+            fill_method = 'mean'
+            break
+        elif choice == '2':
+            fill_method = 'median'
+            break
+        elif choice == '3':
+            fill_method = 'mode'
+            break
+        else:
+            print("Invalid choice. Please enter 1, 2, or 3.")
+
+    print(f"\nFilling missing values using the **{fill_method}** method.")
+
+    # --- Step 3: Apply the Selected Method ---
+    numeric_cols = df.select_dtypes(include=np.number).columns
+    if not numeric_cols.empty:
+        for col in numeric_cols:
+            if df[col].isnull().any():
+                if fill_method == 'mean':
+                    fill_value = df[col].mean()
+                elif fill_method == 'median':
+                    fill_value = df[col].median()
+                else:  # mode
+                    fill_value = df[col].mode()[0]
+
+                df[col] = df[col].fillna(fill_value)
+                print(f"Filled missing values in column '{col}' with value: {fill_value:.2f}")
+    else:
+        print("No numerical columns found to fill missing data.")
+
+    # --- Step 4: Display Cleaned Data ---
+    print("\n" + "="*50 + "\n")
+    print("DataFrame After Cleaning:")
+    print(df)
+
+    # --- Step 5: Save the Cleaned Dataset ---
+    df.to_csv(output_csv_path, index=False)
+    print(f"\nCleaned data successfully saved to **'{output_csv_path}'**.")
+
+# --- Main Execution Block ---
+if __name__ == "__main__":
+    input_file = 'Clean Dataset.csv'
+    output_file = 'cleaned_dataset.csv'
+    clean_missing_data(input_file, output_file)
